@@ -5,16 +5,22 @@ angular.module('myApp.security', [])
             $scope.logout();
           });
 
-          $scope.$on("NotAuthenticatedEvent", function (eveny, res) {
+          $scope.$on("NotAuthenticatedEvent", function (event, res) {
             $scope.$emit("logOutEvent");
             console.log(res.data.error.message);
-            $scope.openErrorModal("You are not authenticated to perform this operation, please login");
+            if (res.data.error.message.indexOf("No authorization header") === 0) {
+              //Provide a friendly message
+              $scope.openErrorModal("You are not authenticated to perform this operation. Please login");
+            }
+            else {
+              $scope.openErrorModal(res.data.error.message);
+            }
           });
-          
-          $scope.$on("NotAuthorizedEvent", function (event, res) {
+
+          $scope.$on("NotAuthorizedEvent", function () {
             $scope.openErrorModal("You are not authorized to perform the requested operation");
           });
-                  
+
           $scope.$on("HttpErrorEvent", function (event, res) {
             $scope.openErrorModal(res.data.error.message);
           });
@@ -68,11 +74,16 @@ angular.module('myApp.security', [])
         .factory('AuthInterceptor', function ($rootScope, $q) {
           return {
             responseError: function (response) {
-              var name="";
-              switch(response.status){
-                case 401: name = "NotAuthenticatedEvent";break;
-                case 402: name = "NotAuthorizedEvent";break;
-                default : name ="HttpErrorEvent";  
+              var name = "";
+              switch (response.status) {
+                case 401:
+                  name = "NotAuthenticatedEvent";
+                  break;
+                case 402:
+                  name = "NotAuthorizedEvent";
+                  break;
+                default :
+                  name = "HttpErrorEvent";
               }
               $rootScope.$broadcast(name, response);
               return $q.reject(response);
