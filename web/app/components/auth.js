@@ -8,19 +8,20 @@ angular.module('myApp.security', [])
           $scope.$on("NotAuthenticatedEvent", function (event, res) {
             $scope.$emit("logOutEvent");
             console.log(res.data.error.message);
-            if (res.data.error.message.indexOf("No authorization header") === 0) {
-              //Provide a friendly message
-              $scope.openErrorModal("You are not authenticated to perform this operation. Please login");
-            }
-            else {
-              if (typeof res.data.error !== "undefined" && res.data.error.message) {
-                $scope.openErrorModal(res.data.error.message);
+            if (typeof res.data.error !== "undefined" && res.data.error.message) {
+              if (res.data.error.message.indexOf("No authorization header") === 0) {
+                //Provide a friendly message
+                $scope.openErrorModal("You are not authenticated to perform this operation. Please login");
               }
               else {
-                //You should never get here - format your error messages as suggested by the seed (backend)
-                $scope.openErrorModal("You are not authenticated");
+                $scope.openErrorModal(res.data.error.message);
               }
             }
+            else {
+              //You should never get here - format your error messages as suggested by the seed (backend)
+              $scope.openErrorModal("You are not authenticated");
+            }
+
           });
 
           $scope.$on("NotAuthorizedEvent", function (event, res) {
@@ -36,7 +37,7 @@ angular.module('myApp.security', [])
             if (typeof res.data.error !== "undefined" && res.data.error.message) {
               $scope.openErrorModal(res.data.error.message);
             }
-            else{
+            else {
               $scope.openErrorModal("Unknown error during http request");
             }
           });
