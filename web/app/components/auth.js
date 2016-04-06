@@ -13,16 +13,32 @@ angular.module('myApp.security', [])
               $scope.openErrorModal("You are not authenticated to perform this operation. Please login");
             }
             else {
-              $scope.openErrorModal(res.data.error.message);
+              if (typeof res.data.error !== "undefined" && res.data.error.message) {
+                $scope.openErrorModal(res.data.error.message);
+              }
+              else {
+                //You should never get here - format your error messages as suggested by the seed (backend)
+                $scope.openErrorModal("You are not authenticated");
+              }
             }
           });
 
-          $scope.$on("NotAuthorizedEvent", function () {
-            $scope.openErrorModal("You are not authorized to perform the requested operation");
+          $scope.$on("NotAuthorizedEvent", function (event, res) {
+            if (typeof res.data.error !== "undefined" && res.data.error.message) {
+              $scope.openErrorModal(res.data.error.message);
+            }
+            else {
+              $scope.openErrorModal("You are not authorized to perform the requested operation");
+            }
           });
 
           $scope.$on("HttpErrorEvent", function (event, res) {
-            $scope.openErrorModal(res.data.error.message);
+            if (typeof res.data.error !== "undefined" && res.data.error.message) {
+              $scope.openErrorModal(res.data.error.message);
+            }
+            else{
+              $scope.openErrorModal("Unknown error during http request");
+            }
           });
 
           clearUserDetails($scope);
@@ -79,7 +95,7 @@ angular.module('myApp.security', [])
                 case 401:
                   name = "NotAuthenticatedEvent";
                   break;
-                case 402:
+                case 403:
                   name = "NotAuthorizedEvent";
                   break;
                 default :
