@@ -16,7 +16,7 @@ public class UserFacade implements IUserFacade {
 
   public UserFacade() {
     //Test Users
-    IUser user = new User("user","test");
+    User user = new User("user","test");
     user.addRole("User");
     users.put(user.getUserName(),user );
     User admin = new User("admin","test");
