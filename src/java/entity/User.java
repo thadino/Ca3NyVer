@@ -2,8 +2,9 @@ package entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import security.IUser;
 
-public class User {
+public class User implements IUser{
   
   private String password;  //Pleeeeease dont store me in plain text
   private String userName;
@@ -20,11 +21,12 @@ public class User {
     this.roles = roles;
   }
   
-  public void AddRole(String role){
+  public void addRole(String role){
     roles.add(role);
   }
     
-  public List<String> getRoles() {
+  @Override
+  public List<String> getRolesAsStrings() {
    return roles;
   }
  
@@ -43,8 +45,7 @@ public class User {
   public void setUserName(String userName) {
     this.userName = userName;
   }
-  
-  
+
  
           
 }
